@@ -49,12 +49,12 @@ class imgProcessing:
                   for j in range(self.new_size)] for i in range(self.new_size)]
 
     def saveImg(self):
-        self.discretizeImg()
         img = Image.new(mode="RGB", size=(self.new_size, self.new_size))
         [img.putpixel((i, j), self.grid[i][j]) for i in range(self.new_size) for j in range(self.new_size)]
         img.save("discretized_img.png")
 
-img_process = imgProcessing("turing.png")
-img_process.saveImg()
+img = imgProcessing("turing.png")
+img.discretizeImg()
+img.saveImg()
 
 
