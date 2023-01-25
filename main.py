@@ -11,6 +11,8 @@ class imgProcessing:
         self.image = Image.open(img_path)
         self.width, self.height = self.image.size
         self.new_size = math.floor(self.width/4)
+        self.grid = []
+
 
     def checkPixel(self, pixel):
         r = pixel[0]
@@ -43,13 +45,13 @@ class imgProcessing:
             return pixel
 
     def discretizeImg(self):
-        return [[ self.checkPixel(self.image.getpixel(((i/self.new_size) * self.width, (j/self.new_size) * self.height))) 
+        self.grid = [[ self.checkPixel(self.image.getpixel(((i/self.new_size) * self.width, (j/self.new_size) * self.height))) 
                   for j in range(self.new_size)] for i in range(self.new_size)]
 
     def saveImg(self):
-        grid = self.discretizeImg()
+        self.discretizeImg()
         img = Image.new(mode="RGB", size=(self.new_size, self.new_size))
-        [img.putpixel((i, j), grid[i][j]) for i in range(self.new_size) for j in range(self.new_size)]
+        [img.putpixel((i, j), self.grid[i][j]) for i in range(self.new_size) for j in range(self.new_size)]
         img.save("discretized_img.png")
 
 img_process = imgProcessing("turing.png")
