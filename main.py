@@ -1,20 +1,24 @@
+
 from PIL import Image
 import math 
+from pathFinding import pathFinding
+import framework
 
-red = (255, 0, 0)
-green = (0, 255, 0)
-black = (0, 0, 0)
-white = (255, 255, 255)
+red = (255, 0, 0, 255)
+green = (0, 255, 0, 255)
+black = (0, 0, 0, 255)
+white = (255, 255, 255, 255)
+purple = (255, 0, 255, 255)
 
 class imgProcessing:
     def __init__(self, img_path):
         self.image = Image.open(img_path)
         self.width, self.height = self.image.size
-        self.new_size = math.floor(self.width/4)
+        self.new_size = math.floor(self.width/10)
         self.grid = []
         self.goal_tests = []
         self.start = []
-
+        self.newGrid = []
 
     def checkPixel(self, pixel):
         r = pixel[0]
@@ -48,17 +52,26 @@ class imgProcessing:
     def discretizeImg(self):
         for i in range(self.new_size):
             row = []
+            r2 = []
             coordX = (i/self.new_size) * self.width
             for j in range(self.new_size):
                 coordY = (j/self.new_size) * self.height
-                pixel = self.checkPixel(self.image.getpixel((coordX, coordY)))
+                pixel = self.checkPixel(self.image.getpixel((int(coordX), int(coordY))))
                 # Adding start
                 if ((pixel == red) and (len(self.start) == 0)):  
-                    self.start.append(coordX, coordY)
+                    self.start.append((i, j))
+                    r2.append(1)
+                elif ((pixel == red) and (len(self.start) > 0)): r2.append(1)
                 # Adding goal states
                 if (pixel == green):  
-                    self.goal_tests.append(coordX, coordY)
+                    self.goal_tests.append((i, j))
+                    r2.append(2)
+                if ((pixel) == white): r2.append(3)
+                if ((pixel) == black): r2.append(4)
+
                 row.append(pixel)
+
+            self.newGrid.append(r2)
             self.grid.append(row)
 
     def saveImg(self):
@@ -66,8 +79,7 @@ class imgProcessing:
         [img.putpixel((i, j), self.grid[i][j]) for i in range(self.new_size) for j in range(self.new_size)]
         img.save("discretized_img.png")
 
-img = imgProcessing("turing.png")
+
+img = imgProcessing("lab1.jpg")
 img.discretizeImg()
 img.saveImg()
-
-
